@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- configuration -->
+<configuration debug="true">
+	<!-- Appender: 어떤 위치에서 어느 레벨의 로그를 기록할지를 설정 -->
+	<appender name="consoleAppender" 
+		class="ch.qos.logback.core.ConsoleAppender">
+		<!-- 실제 로그를 찍을 방식을 설정 : encoder -->
+		<encoder>
+			<charset>UTF-8</charset>
+			<pattern>
+			%d{HH:mm:ss.SSS} %thread %-5level %logger{5} - %msg%n
+			</pattern>
+		</encoder>
+	</appender>
+	
+	<!-- fileappender : 로그를 파일로 기록 -->
+	<appender name="fileAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+	<file>\logs\myportal.log</file>
+	<encoder>
+		<charset>UTF-8</charset>
+		<pattern>
+			%d{HH:mm:ss.SSS} %thread %-5level %logger{5} - %msg%n
+		</pattern>
+	</encoder>
+	<!-- Rolling Policy: 로그를 백업하고 자동 압축하기 위한 정책 -->
+	<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+		<fileNamePattern>\logs\myportal.%i.log.zip</fileNamePattern>
+		<MinIndex>1</MinIndex>
+		<MaxIndex>10</MaxIndex>
+	</rollingPolicy>
+	<!-- triggeringPolicy: rolling을 수행할 정책 -->
+	<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+		<MaxFileSize>1MB</MaxFileSize>
+		
+	</triggeringPolicy>
+	</appender>
+	
+	<!-- consoleAppender를 사용할 패키지와 로그레벨을 지정할 수 있다 -->
+	<logger name="com.bitacademy.myportal" level="DEBUG">
+		<!-- 해당 로그를 출력할 appender 등록 -->
+		<appender-ref ref="consoleAppender" />
+	</logger>
+	
+	<!-- 내부에서 발생하는 모든 로그 메세지 -->
+	<root level="TRACE">
+		<appender-ref ref ="fileAppender"/>
+	</root>
+</configuration>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="board">
+	<!-- 목록을 위한 전체 SELECT -->
+	<select id="selectAll" resultType="BoardVo">
+	<![CDATA[
+	SELECT b.no,
+		b.title,
+		b.hit,
+		b.regdate,
+		b.member_no memberNo,
+		m.name memberName
+	FROM board b, members m
+	WHERE b.member_no = m.no
+	ORDER BY regdate DESC
+	
+	]]>
+	</select>
+	
+	<!-- 게시물 등록을 위한 SQL -->
+	<insert id="insert" parameterType="BoardVo">
+	
+	<![CDATA[
+	INSERT INTO board
+	(no, title, content, member_no)
+	VALUES
+	(seq_board_no.nextval, #{title}, #{content}, #{memberNo})
+	
+	]]>
+	
+	</insert>
+	
+</mapper>
+
+
+
+
+
+
+
+
+
+
+

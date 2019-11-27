@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.2.xsd
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.2.xsd">
+	<context:annotation-config/>
+	<context:component-scan base-package="com.bitacademy.myportal.controller"/>
+
+
+	<!-- 정적 파일 자원의 제공 -->
+	<!-- Dispatcher servlet이 전체 요청을 모두 가로채고 있어서 정적 파일 제공을 못하는 상태
+	dispatcherServlet으로부터 정적파일 처리권한을 회수
+	tomcat의 기본 매핑시스템으로 다시 권한을 위임 -->
+
+	<mvc:annotation-driven>
+		<mvc:message-converters>
+			<!-- SimpleHttpMessageConverter :String -> html로 변경하는 기본 컨버터 -->
+			<bean class="org.springframework.http.converter.StringHttpMessageConverter">
+				 <property name="supportedMediaTypes">
+				 	<list>
+				 		<value> text/html;charset=UTF-8</value>
+				 	</list>
+				 </property>
+			</bean>
+			<!-- jackson converter: object -> JSON -->
+			<bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+			<property name="supportedMediaTypes">
+				<list>
+					<value>application/json;charset=UTF-8</value>
+				</list>
+			</property>
+			</bean>
+		</mvc:message-converters>
+	</mvc:annotation-driven>
+	<mvc:default-servlet-handler />
+	<!-- Interceptor-->
+	<mvc:interceptors>
+		<!-- <mvc:interceptor>
+			
+			<mvc:mapping path="/board/**"/>
+			<bean class="com.bitacademy.myportal.interceptor.MyInterceptor"/>
+		</mvc:interceptor>
+		<mvc:interceptor>
+			
+			<mvc:mapping path="/board/**"/>
+			<bean class="com.bitacademy.myportal.interceptor.MyInterceptor2"/>
+		</mvc:interceptor>
+	</mvc:interceptors > -->
+	<!-- 인증 인터센터 추가 -->
+	<!-- /board 관련 url에는 기본적으로 로그인이 필요 -->
+	<mvc:interceptor>
+		<mvc:mapping path="/board/**"/>
+		<!-- 다만, /board/list에는 로그인 적용하지 않음 -->
+		<mvc:exclude-mapping path="/board/list/**"/>
+		<bean class="com.bitacademy.myportal.interceptor.AuthInterceptor"/>
+		</mvc:interceptor>
+	</mvc:interceptors>
+	
+	<!-- view resolver : jstlview -->
+	<bean id ="viewResolver"
+		  class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<!-- 실제 view resolver로 사용할 클래스 -->
+		<property name="viewClass"
+			value="org.springframework.web.servlet.view.JstlView"/>
+			<!-- 접두사 -->
+		<property name="prefix"
+			value="/WEB-INF/views/"/>
+			<!-- 접미어 -->
+		<property name ="suffix"
+			value=".jsp"/>
+			<!-- 우선순위 -->
+			<!-- viewresolver가 2개 이상 등록ㄷ되엇을때 적용되는 우선순위 -->
+			<property name ="order" value="1"/>
+</bean>
+
+	<!-- Message Source -->
+	<bean id ="messageSource"
+		  class="org.springframework.context.support.ResourceBundleMessageSource">
+			<property name="basenames">
+				<list>
+					<value>messages/messages_ko</value>
+				</list>
+			</property>
+	</bean>
+	
+	<!-- Multipart Resolver 세팅 -->
+	<bean id ="multipartResolver"
+		  class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		  <!-- 업로드 할 수 있는 최대 파일 크기 -->
+		  <property name="maxUploadSize" value="10485760"/>
+		  <!-- 파일의 기본 인코딩 -->
+		  <property name="defaultEncoding" value="utf-8"/>
+	</bean>
+	
+	<!-- Resource Mapping -->
+	<!-- 실제 파일의 위치와 Web URL을 연결 -->
+	<mvc:resources mapping="/upload/**"
+		location="file:/upload/" />
+	
+
+</beans>
+
+
+
+
+
+

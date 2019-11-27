@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="member">
+	<!-- 가입을 위한 insert Query -->
+	<insert id ="insert" parameterType="MemberVo">
+	<![CDATA[
+	INSERT INTO members
+	(no, name, password, email, gender)
+	VALUES(
+		seq_members_no.nextval, #{name}, #{password}, #{email}, #{gender}
+		)
+	]]>
+	
+	</insert>
+	<!-- 이메일 중복 체크를 위한 select email 필드만 검증 -->
+	<select id="selectByEmail" parameterType="String" resultType="MemberVo">
+	<![CDATA[
+	SELECT no, name, email, gender
+	FROM members
+	WHERE email=#{email}
+	]]>
+	
+	</select>
+	<!-- 로그인을 위한 사용자 검색 SELECT email and password를 검증 -->
+	<!-- map으로 세팅하기 -->
+	<select id="selectByEmailAndPassword" parameterType="map" resultType="MemberVo">
+	<![CDATA[
+	SELECT no, name, email, gender
+	FROM members
+	WHERE email=#{email} AND password=#{password}
+	]]>
+	
+	</select>
+	
+	
+	
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
